@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 
 const authroutes= require("./routes/authroutes")
+const authmiddleware= require("./middleware/authMiddleware")
 
 dotenv.config();
 
@@ -24,6 +25,16 @@ app.use(express.json())
 
 app.get("/",(req,res)=>{
   res.send("file server is running ")
+});
+
+
+//Auth middleware request
+app.get("/api/protected",authmiddleware,(req,res) =>{
+  res.json({
+    message:"protected route accessed",
+    req: req.user
+
+  })
 })
 
 app.use("/api/auth",authroutes)
