@@ -8,6 +8,8 @@ const connectDB = require("./config/db");
 const authroutes= require("./routes/authroutes")
 const authmiddleware= require("./middleware/authMiddleware")
 
+const fileroutes = require("./routes/fileRoutes")
+
 dotenv.config();
 
 // Connect DB
@@ -38,6 +40,8 @@ app.get("/api/protected",authmiddleware,(req,res) =>{
 })
 
 app.use("/api/auth",authroutes)
+
+app.use("/api/files",fileroutes)
 
 app.listen(5000,()=>{
   console.log("server is running on port 5000")
