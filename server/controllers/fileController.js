@@ -133,53 +133,65 @@ const deleteFile = async (req, res) => {
 
 //Rename file 
 
-const renamefile = async(req,res)=>{
+const renamefile = async (req, res) => {
 
-  try{
+  try {
     const fileID = req.params.id;
     const newName = req.body.newName;
-   
-  const file = await File.findById(fileID)
 
-  if(!file){
+    // Validate newName
+    if (!newName || newName.trim() === "") {
+      return res.status(400).json({
+        message: "New filename is required"
+      })
+    }
+
+    const file = await File.findById(fileID)
+
+    if (!file) {
+      return res.status(500).json({
+        message: "File not found"
+      })
+    }
+
+    if (file.userId.toString() != req.user.id) {
+      return res.status(401).json({
+        message: "Unauthorized"
+      })
+    }
+
+    const oldpath = path.join(__dirname, "..", file.path)
+
+    // new file with the same extension 
+
+    const ext = path.extname(file.originalname);
+
+    const newfilename = newName.trim() + ext;
+
+    const newpath = path.join("uploads", newfilename)
+
+    //rename file in storage
+    fs.renameSync(oldpath, path.join(__dirname, "..", newpath))
+
+    //update db
+    file.filename = newfilename;
+    file.path = newpath;
+    file.originalname = newfilename;
+
+    await file.save();
+
+    return res.status(200).json({
+      message: "File updated successfully",
+      file: file
+    })
+  } catch (error) {
+    console.error("Rename error:", error)
     return res.status(500).json({
-      message:"File not found"})
-      }
-
-      if(file.userId.toString()!=req.user.id){
-        return res.status(401).json({
-          message:"Unauthorized"})
-      }
-
-      const oldpath= path.join(__dirname,"..",file.path)
-
-      // new file with the same extension 
-
-      const ext= path.extname(file.originalname);
-
-      const newfilename = newName + ext ;
-
-      const newpath = path.join("uploads",newfilename)
-
-      //rename file in storage
-      fs.renameSync(oldpath,path.join(__dirname,"..",newpath))
-
-//update db
-      file.filename= newfilename;
-      file.path= newpath;
-      file.originalname= newfilename;
-
-      await file.save();
-
-      return res.status(201).json({
-        message:"File updated successfully"})
-  }catch(error){
-    console.error(error)
-    return res.status(201).json({
-      message:"file update failed"
+      message: "file update failed",
+      error: error.message
     })
   }
 }
 
 
-module.exports = { uploadFile, getFiles, downloadfile, deleteFile ,renamefile};
+module.exports = { uploadFile, getFiles, downloadfile, deleteFile, renamefile };
