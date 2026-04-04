@@ -6,6 +6,12 @@ const fs = require("fs");
 //upload file
 const uploadFile = async (req, res) => {
   try {
+
+    if(!req.file || !req.file.path ){
+return res.status(400).json({
+  message:"file path required"
+})
+    }
     const newFile = new File({
       filename: req.file.filename,
       originalname: req.file.originalname,

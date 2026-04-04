@@ -9,6 +9,7 @@ const authroutes= require("./routes/authroutes")
 const authmiddleware= require("./middleware/authMiddleware")
 
 const fileroutes = require("./routes/fileRoutes")
+const folderRoutes = require("./routes/folderRoutes")
 
 dotenv.config();
 
@@ -34,14 +35,14 @@ app.get("/",(req,res)=>{
 app.get("/api/protected",authmiddleware,(req,res) =>{
   res.json({
     message:"protected route accessed",
-    req: req.user
-
-  })
+    req: req.user})
 })
 
 app.use("/api/auth",authroutes)
 
 app.use("/api/files",fileroutes)
+
+app.use("/api/folder",folderRoutes)
 
 app.listen(5000,()=>{
   console.log("server is running on port 5000")
