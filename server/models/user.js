@@ -66,7 +66,7 @@ const userSchema = new mongoose.Schema({
   // Storage management
   storageQuota: {
     type: Number,
-    default: function() {
+    default: function () {
       // Admin: 1GB (1073741824 bytes), User: 100MB (104857600 bytes)
       return this.role === 'admin' ? 1073741824 : 104857600;
     }

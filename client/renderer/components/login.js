@@ -23,13 +23,13 @@ loginForm.addEventListener("submit", async (e) => {
     // Store user data for later use
     const userData = data.user || {};
     const isAdmin = userData.isAdmin === true;
-    
+
     console.log('Login successful - User:', userData);
     console.log('isAdmin:', isAdmin);
 
     // Use returned user display name if available
     const displayName = userData.username ? userData.username : username;
-    
+
     if (isAdmin) {
       // Show admin dashboard
       console.log('Showing admin dashboard');

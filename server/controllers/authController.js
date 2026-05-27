@@ -109,10 +109,10 @@ const register = async (req, res) => {
 
     // Create user - Auto-verify email in development mode for testing
     const isDevMode = process.env.NODE_ENV !== 'production';
-    
+
     // Set storage quota based on role (default is 'user')
     const storageQuota = 104857600; // 100MB for regular users
-    
+
     const user = new User({
       username,
       email,

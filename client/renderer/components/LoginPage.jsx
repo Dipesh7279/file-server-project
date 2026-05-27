@@ -26,7 +26,7 @@ export default function LoginPage({ onLoginSuccess }) {
       console.log('Login response:', response);
       console.log('User data:', response.user);
       console.log('isAdmin:', response.user?.isAdmin);
-      
+
       if (response.accessToken) {
         onLoginSuccess(response.user, response.accessToken);
       }
@@ -151,70 +151,70 @@ export default function LoginPage({ onLoginSuccess }) {
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
-        ) : activeTab === 'admin-login' ? (
-          <form onSubmit={handleLogin}>
-            <h2>Admin Login</h2>
-            <p style={{ fontSize: '12px', color: '#666', marginBottom: '15px' }}>
-              Access restricted admin panel
-            </p>
-            <input
-              type="text"
-              placeholder="Admin Username"
-              value={username || email}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button type="submit" disabled={loading}>
-              {loading ? 'Logging in...' : 'Login as Admin'}
-            </button>
-            <p className="help-text" style={{ fontSize: '12px', marginTop: '15px' }}>
-              ⚙️ Admin Dashboard will show if you have admin privileges
-            </p>
-          </form>
-        ) : (
-          <form onSubmit={handleRegister}>
-            <h2>Create Account</h2>
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password (min 8 chars, uppercase, number, special)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-            <button type="submit" disabled={loading}>
-              {loading ? 'Registering...' : 'Register'}
-            </button>
-          </form>
+      ) : activeTab === 'admin-login' ? (
+      <form onSubmit={handleLogin}>
+        <h2>Admin Login</h2>
+        <p style={{ fontSize: '12px', color: '#666', marginBottom: '15px' }}>
+          Access restricted admin panel
+        </p>
+        <input
+          type="text"
+          placeholder="Admin Username"
+          value={username || email}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login as Admin'}
+        </button>
+        <p className="help-text" style={{ fontSize: '12px', marginTop: '15px' }}>
+          ⚙️ Admin Dashboard will show if you have admin privileges
+        </p>
+      </form>
+      ) : (
+      <form onSubmit={handleRegister}>
+        <h2>Create Account</h2>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password (min 8 chars, uppercase, number, special)"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registering...' : 'Register'}
+        </button>
+      </form>
         )}
-      </div>
     </div>
+    </div >
   );
 }

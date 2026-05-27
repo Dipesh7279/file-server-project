@@ -161,9 +161,9 @@ class AdminDashboard {
       const response = await window.api.get('/admin/storage-stats');
       const stats = response.stats || response;
 
-      document.getElementById("total-storage-used").textContent = 
+      document.getElementById("total-storage-used").textContent =
         ((stats.totalStorageUsed || 0) / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
-      document.getElementById("total-quota").textContent = 
+      document.getElementById("total-quota").textContent =
         ((stats.totalStorageQuota || 0) / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
 
       const users = stats.topStorageUsers || [];
@@ -206,7 +206,7 @@ class AdminDashboard {
       document.getElementById("health-active").textContent = health.users?.active || 0;
       document.getElementById("health-suspended").textContent = health.users?.suspended || 0;
       document.getElementById("health-files").textContent = health.files?.active || 0;
-      document.getElementById("health-storage").textContent = 
+      document.getElementById("health-storage").textContent =
         ((health.storage?.usagePercentage || 0).toString());
 
       const status = `
