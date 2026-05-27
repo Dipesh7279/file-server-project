@@ -1,5 +1,6 @@
 const path = require("path")
 const File = require("../models/File")
+const { Folder } = require("../models/Folder")
 
 const fs = require("fs");
 
@@ -48,7 +49,7 @@ const getFiles = async (req, res) => {
   }
   catch (err) {
     console.error(err),
-      res.status(401).json({
+      res.status(500).json({
         message: "failed to fetch files"
       })
   }
@@ -68,13 +69,13 @@ const downloadfile = async (req, res) => {
     const file = await File.findById(fileID);
 
     if (!file) {
-      return res.status(201).json({
+      return res.status(404).json({
         message: "File not found"
       })
     }
 
     if (file.userId.toString() != req.user.id) {
-      return res.status(201).json({
+      return res.status(403).json({
         message: "Unauthorized access "
       })
     }
@@ -85,7 +86,7 @@ const downloadfile = async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    return res.status(201).json({
+    return res.status(500).json({
       message: "Download Failed"
 
     })
@@ -102,14 +103,14 @@ const deleteFile = async (req, res) => {
     const file = await File.findById(fileID);
 
     if (!file) {
-      return res.status(201).json({
+      return res.status(404).json({
         message: "File not found"
       })
     }
 
     //check ownership
     if (file.userId.toString() != req.user.id) {
-      return res.status(201).json({
+      return res.status(403).json({
         message: "unauthorized access"
       })
     }
@@ -120,18 +121,18 @@ const deleteFile = async (req, res) => {
 
     // delete from storage
 
-    fs.unlinkSync(filepath);
+    await fs.promises.unlink(filepath);
 
     //delete from db
     await File.findByIdAndDelete(fileID)
 
-    res.status(201).json({
+    res.status(200).json({
       message: "File deleted successfully"
     })
 
   } catch (err) {
     console.error(err)
-    res.status(201).json({
+    res.status(500).json({
       message: "error in file deletion"
     })
   }
@@ -199,5 +200,107 @@ const renamefile = async (req, res) => {
   }
 }
 
+const movefile =async(req,res)=>{
+  try{
+  const fileID =req.params.id;
+  const {folderId} = req.body
+  
+  // Validate folderId is provided
+  if(!folderId){
+    return res.status(400).json({
+      message:"Folder ID is required in request body"
+    });
+  }
+  
+  //find file
+  const file= await File.findById(fileID)
+  if(!file){
+    return res.status(404).json({
+      message:"file not found"
+    });
+  }
 
-module.exports = { uploadFile, getFiles, downloadfile, deleteFile, renamefile };
+  //ownership check
+
+  if(file.userId.toString() !==req.user.id){
+    return res.status(403).json({
+  message:"unauthorized"
+})}
+
+//Find target folder
+console.log("Looking for folder with ID:", folderId);
+const folder = await Folder.findById(folderId);
+
+if(!folder){
+  console.log("Folder not found in database for ID:", folderId);
+  return res.status(404).json({
+    message:"Folder not found - Make sure the folder ID is correct and created by this user"
+  });
+}
+
+// check folder ownership
+if(folder.userID.toString() !==req.user.id){
+  return res.status(403).json({
+    message:"unauthorized folder access"
+  });
+}
+
+//move file
+file.folderId = folderId
+
+await file.save();
+
+res.status(200).json({
+  message:"File moved successfully"
+});
+} catch(error){
+  console.error(error);
+  res.status(500).json({
+    message:"move failed",
+    error: error.message
+  })
+  }
+}
+
+const searchFiles = async(req,res) =>{
+  try{
+    const { name , page =1 , limit =5} = req.query
+
+    //search condition
+    const searchQuery ={
+      userId:req.user.id,
+      originalname:{
+        $regex: name || "",
+        $options : "i"
+      }
+    };
+
+    //pagination calculation
+    const skip = (page-1)*limit;
+
+    //fetch files
+    const files = await File.find(searchQuery)
+    .skip(skip)
+    .limit(Number(limit))
+    .sort({ createdAt: -1});
+
+    //total count
+    const total = await File.countDocuments(searchQuery);
+    res.status(200).json({
+      message:"Files fetched suceesfully",
+      total,
+      currentPage:Number(page),
+      totalPages: Math.ceil(total/limit),
+      files
+    });
+  } catch(error){
+    console.error(error);
+    res.status(500).json({
+      message:"search failed"
+    });
+  }
+};
+
+
+
+module.exports = { uploadFile, getFiles, downloadfile, deleteFile, renamefile,movefile,searchFiles };

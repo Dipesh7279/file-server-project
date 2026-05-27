@@ -7,7 +7,7 @@ const upload = require("../config/multer");
 
 const authmiddleware = require("../middleware/authMiddleware");
 
-const {uploadFile,getFiles,downloadfile,deleteFile,renamefile} = require("../controllers/fileController")
+const {uploadFile,getFiles,downloadfile,deleteFile,renamefile,movefile,searchFiles} = require("../controllers/fileController")
 
 
 //upload route
@@ -26,6 +26,10 @@ router.delete("/:id",authmiddleware,deleteFile);
 
 //update route
 router.put("/rename/:id",authmiddleware,renamefile)
+
+router.put("/move/:id", authmiddleware, movefile);
+
+router.get("/search",authmiddleware,searchFiles)
 
 
 module.exports = router;

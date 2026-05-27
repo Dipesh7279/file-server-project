@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FileServer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ============ Login Screen ============ -->
+  <div id="login-screen" class="screen active">
+    <div class="auth-container">
+      <div class="auth-card">
+        <h1 class="auth-title">FileServer</h1>
+        <p class="auth-subtitle">Sign in to manage your files</p>
+
+        <div id="login-error" class="error-message" hidden></div>
+
+        <form id="login-form" class="auth-form">
+          <div class="form-group">
+            <label for="login-server">Server URL</label>
+            <input type="text" id="login-server" placeholder="http://localhost:5000" value="http://localhost:5000" required />
+          </div>
+          <div class="form-group">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" placeholder="Enter username" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+            Sign In
+          </button>
+        </form>
+
+        <p class="auth-footer">
+          Don't have an account?
+          <a href="#" id="goto-register">Create one</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Register Screen ============ -->
+  <div id="register-screen" class="screen">
+    <div class="auth-container">
+      <div class="auth-card">
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-subtitle">Register a new account</p>
+
+        <div id="register-error" class="error-message" hidden></div>
+        <div id="register-success" class="success-message" hidden></div>
+
+        <form id="register-form" class="auth-form">
+          <div class="form-group">
+            <label for="register-server">Server URL</label>
+            <input type="text" id="register-server" placeholder="http://localhost:5000" value="http://localhost:5000" required />
+          </div>
+          <div class="form-group">
+            <label for="register-username">Username</label>
+            <input type="text" id="register-username" placeholder="Choose a username" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <input type="password" id="register-password" placeholder="Choose a password (min 6 chars)" required minlength="6" autocomplete="new-password" />
+          </div>
+          <div class="form-group">
+            <label for="register-confirm">Confirm Password</label>
+            <input type="password" id="register-confirm" placeholder="Confirm your password" required minlength="6" autocomplete="new-password" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="register-btn">
+            Create Account
+          </button>
+        </form>
+
+        <p class="auth-footer">
+          Already have an account?
+          <a href="#" id="goto-login">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Dashboard Screen ============ -->
+  <div id="dashboard-screen" class="screen">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <h2 class="topbar-title">FileServer</h2>
+      </div>
+      <div class="topbar-center">
+        <div class="search-container">
+          <input type="text" id="search-input" class="search-input" placeholder="Search files..." />
+          <button id="search-clear-btn" class="btn btn-icon" title="Clear search" hidden>✕</button>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="user-display" class="user-display"></span>
+        <button id="logout-btn" class="btn btn-outline" title="Logout">Logout</button>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+      <!-- Sidebar: Folder Tree -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h3>Folders</h3>
+          <button id="new-folder-btn" class="btn btn-sm" title="New Folder">+ Folder</button>
+        </div>
+        <div class="sidebar-content">
+          <div class="folder-item root-folder selected" data-folder-id="root">
+            <span class="folder-icon">📁</span>
+            <span class="folder-name">All Files</span>
+          </div>
+          <div id="folder-tree" class="folder-tree"></div>
+        </div>
+      </aside>
+
+      <!-- Main content: File table -->
+      <main class="main-content">
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div id="breadcrumb" class="breadcrumb">
+              <span class="breadcrumb-item active">All Files</span>
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <button id="upload-btn" class="btn btn-primary">
+              ↑ Upload File
+            </button>
+            <button id="refresh-btn" class="btn btn-outline" title="Refresh">↻ Refresh</button>
+          </div>
+        </div>
+
+        <!-- Upload Progress -->
+        <div id="upload-progress" class="progress-container" hidden>
+          <div class="progress-info">
+            <span id="upload-filename">Uploading...</span>
+            <span id="upload-percent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div id="upload-progress-fill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- Download Progress -->
+        <div id="download-progress" class="progress-container" hidden>
+          <div class="progress-info">
+            <span>Downloading...</span>
+            <span id="download-percent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div id="download-progress-fill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- File Table -->
+        <div class="file-table-container">
+          <table class="file-table" id="file-table">
+            <thead>
+              <tr>
+                <th class="col-name sortable" data-sort="name">Name ↕</th>
+                <th class="col-size sortable" data-sort="size">Size ↕</th>
+                <th class="col-date sortable" data-sort="date">Date ↕</th>
+                <th class="col-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="file-table-body">
+            </tbody>
+          </table>
+
+          <!-- Empty state -->
+          <div id="empty-state" class="empty-state" hidden>
+            <div class="empty-icon">📂</div>
+            <p class="empty-title">No files here</p>
+            <p class="empty-subtitle">Upload a file or select a different folder</p>
+          </div>
+
+          <!-- Loading state -->
+          <div id="loading-state" class="loading-state" hidden>
+            <div class="spinner"></div>
+            <p>Loading files...</p>
+          </div>
+        </div>
+
+        <!-- Search Results Pagination -->
+        <div id="pagination" class="pagination" hidden>
+          <button id="prev-page-btn" class="btn btn-sm" disabled>← Previous</button>
+          <span id="page-info" class="page-info">Page 1 of 1</span>
+          <button id="next-page-btn" class="btn btn-sm" disabled>Next →</button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ============ Modal Overlay ============ -->
+  <div id="modal-overlay" class="modal-overlay" hidden>
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Modal</h3>
+        <button id="modal-close" class="btn btn-icon">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+      </div>
+      <div class="modal-footer" id="modal-footer">
+        <button id="modal-cancel" class="btn btn-outline">Cancel</button>
+        <button id="modal-confirm" class="btn btn-primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context Menu -->
+  <div id="context-menu" class="context-menu" hidden>
+    <div class="context-menu-item" data-action="download">⬇ Download</div>
+    <div class="context-menu-item" data-action="rename">✏ Rename</div>
+    <div class="context-menu-item" data-action="move">📁 Move to Folder</div>
+    <div class="context-menu-separator"></div>
+    <div class="context-menu-item danger" data-action="delete">🗑 Delete</div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="api.js"></script>
+  <script src="components/login.js"></script>
+  <script src="components/register.js"></script>
+  <script src="components/modals.js"></script>
+  <script src="components/folder-tree.js"></script>
+  <script src="components/file-table.js"></script>
+  <script src="components/upload.js"></script>
+  <script src="components/search.js"></script>
+  <script src="components/dashboard.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

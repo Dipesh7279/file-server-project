@@ -29,7 +29,7 @@ const register = async(req,res)=>{
 
     })
     await user.save()
-    return res.status(401).json({
+    return res.status(201).json({
       message:"user registered successfully"
     })
   }
@@ -80,7 +80,7 @@ const login = async(req,res)=>{
   }
   catch(err){
     console.log("err")
-    return res.status(201).json({
+    return res.status(500).json({
       message:"server error"
       
     })

@@ -1,26 +1,26 @@
 const mongoose = require("mongoose")
 
 const folderSchema = new mongoose.Schema({
-  name:{
-type:String,
-required:true
+  name: {
+    type: String,
+    required: true
   },
-  parentID:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"folder",
-    default:null
+  parentID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Folder",
+    default: null
 
   },
-  userID:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"user"
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
 
-  },createdAt:{
-    default:Date.now(),
-    type:Date
+  }, createdAt: {
+    default: Date.now,
+    type: Date
   }
 })
 
-const Folder = mongoose.model("Folder",folderSchema)
+const Folder = mongoose.model("Folder", folderSchema)
 
-module.exports = {Folder}
+module.exports = { Folder }
