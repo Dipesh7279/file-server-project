@@ -1,0 +1,255 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                  ADMIN QUOTA FIX - STEP BY STEP GUIDE                      ║
+║                                                                            ║
+║  Current Status: Admin quota is 100MB (0.10 GB) ❌                        ║
+║  Target Status: Admin quota is 1GB ✅                                     ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+STEP 1️⃣: MAKE SURE SERVER IS STOPPED
+═══════════════════════════════════════════════════════════════════════════
+
+If server is running in PowerShell:
+  - Press: Ctrl + C
+  - Wait for prompt to return
+  
+Expected: Command line is ready (PS C:\...>)
+
+═══════════════════════════════════════════════════════════════════════════
+
+STEP 2️⃣: CLOSE THE ELECTRON APP (CLIENT)
+═══════════════════════════════════════════════════════════════════════════
+
+If Electron app (FileServer) is open:
+  - Click the X button to close it
+  - Or press Alt+F4
+
+Expected: App is closed
+
+═══════════════════════════════════════════════════════════════════════════
+
+STEP 3️⃣: RUN THE FIX SCRIPT
+═══════════════════════════════════════════════════════════════════════════
+
+In PowerShell, navigate to project root:
+
+  cd C:\Users\vinit\file-server-project.worktrees\agents-cross-platform-gui-file-server
+
+Then run the fix script:
+
+  node fix-admin-quota.js
+
+Expected Output (should show):
+
+  ✅ Connected to MongoDB
+
+  📊 BEFORE FIX:
+    👑 testadmin: 0.100 GB (104857600 bytes)
+
+  🔧 UPDATING ADMINS TO 1GB...
+  ✅ Updated 1 admin users to 1GB quota
+
+  🔧 UPDATING USERS TO 100MB...
+  ✅ Updated X regular users to 100MB quota
+
+  📊 AFTER FIX:
+  👑 ADMIN USERS:
+    ✓ testadmin: 1.000 GB | Used: 0.00 MB
+
+  👤 REGULAR USERS:
+    ✓ testuser: 100 MB | Used: 0.00 MB
+
+  ✅ ALL QUOTAS FIXED SUCCESSFULLY!
+
+⚠️ IMPORTANT: Look for "1.000 GB" - this means it's fixed!
+
+═══════════════════════════════════════════════════════════════════════════
+
+STEP 4️⃣: VERIFY DATABASE WAS UPDATED
+═══════════════════════════════════════════════════════════════════════════
+
+In same PowerShell, run MongoDB check:
+
+  mongosh fileserver
+
+Then check testadmin's quota:
+
+  db.users.findOne({username: "testadmin"})
+
+Look for this in the output:
+
+  storageQuota: 1073741824
+
+This is 1GB in bytes! If you see this number, database is fixed ✅
+
+Exit MongoDB:
+
+  exit
+
+═══════════════════════════════════════════════════════════════════════════
+
+STEP 5️⃣: START SERVER AGAIN
+═══════════════════════════════════════════════════════════════════════════
+
+In PowerShell:
+
+  cd server
+  npm start
+
+Wait for this message:
+
+  Server running on port 5000
+
+✅ Server is ready!
+
+═══════════════════════════════════════════════════════════════════════════
+
+STEP 6️⃣: START CLIENT IN NEW POWERSHELL WINDOW
+═══════════════════════════════════════════════════════════════════════════
+
+⚠️ IMPORTANT: Open a DIFFERENT PowerShell window (don't close server one!)
+
+In new PowerShell:
+
+  cd C:\Users\vinit\file-server-project.worktrees\agents-cross-platform-gui-file-server\client
+  npm start
+
+Wait for Electron window to appear
+
+✅ App is ready!
+
+═══════════════════════════════════════════════════════════════════════════
+
+STEP 7️⃣: TEST ADMIN LOGIN
+═══════════════════════════════════════════════════════════════════════════
+
+In Electron app:
+
+1. Click "Admin Login" link (bottom of login form)
+
+2. Enter credentials:
+   Username: testadmin
+   Password: TestAdmin@123
+
+3. Click "Login as Admin"
+
+4. Wait for admin dashboard to load
+
+═══════════════════════════════════════════════════════════════════════════
+
+STEP 8️⃣: VERIFY THE FIX
+═══════════════════════════════════════════════════════════════════════════
+
+After admin dashboard loads, verify:
+
+  ✅ Dashboard shows "⚙️ Admin Dashboard" header
+  
+  ✅ You see 5 tabs:
+     - 📊 Statistics
+     - 👥 Users
+     - 💾 Storage
+     - ❤️ System Health
+     - 📝 Activity Logs
+
+  ✅ Click "💾 Storage" tab
+
+  ✅ Look for:
+     - "Total Storage Used: X GB"
+     - "Total Quota: 1.00 GB" ← This should be 1GB now!
+
+  ✅ If it shows 1.00 GB or 1 GB → IT'S FIXED! ✅
+
+═══════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════
+
+❌ Problem: "fix-admin-quota.js not found"
+   Solution: Make sure you're in the project root directory:
+   pwd
+   Should show: C:\Users\vinit\file-server-project.worktrees\agents-cross-platform-gui-file-server
+
+❌ Problem: "MongoDB connection failed"
+   Solution: Start MongoDB first:
+   mongosh
+   Then exit and try again
+
+❌ Problem: Script runs but says "0 admin users updated"
+   Solution: Check if testadmin exists:
+   mongosh fileserver
+   db.users.find({role: "admin"})
+   If empty, need to promote testadmin to admin first
+
+❌ Problem: Still shows 0.10 GB after fix
+   Solution: 
+   1. Close app completely
+   2. Clear browser cache: Ctrl+Shift+Delete
+   3. Logout and login again
+   4. Refresh page: F5
+
+❌ Problem: Server won't start
+   Solution:
+   1. Make sure other server isn't running on port 5000
+   2. Check for syntax errors in console
+   3. Restart PowerShell
+
+═══════════════════════════════════════════════════════════════════════════
+
+QUICK CHECKLIST
+═══════════════════════════════════════════════════════════════════════════
+
+Before running fix:
+  [ ] Server is stopped
+  [ ] Electron app is closed
+  [ ] MongoDB is running (test with mongosh)
+
+Running fix script:
+  [ ] Ran: node fix-admin-quota.js
+  [ ] Saw: "1.000 GB" in output
+  [ ] Saw: "ALL QUOTAS FIXED SUCCESSFULLY!"
+
+After fix:
+  [ ] Verified in MongoDB: storageQuota = 1073741824
+  [ ] Restarted server (npm start)
+  [ ] Restarted client (npm start)
+  [ ] Logged in as testadmin
+  [ ] Opened Storage tab
+  [ ] Verified "Total Quota: 1.00 GB" ✅
+
+═══════════════════════════════════════════════════════════════════════════
+
+EXPECTED RESULTS AFTER ALL STEPS
+═══════════════════════════════════════════════════════════════════════════
+
+Dashboard shows:
+  ✅ "Storage updated: 1.00/1.00 GB (0%)" 
+     (instead of 0.00/0.10 GB)
+
+  ✅ Storage tab shows 1GB quota
+
+  ✅ System Health tab shows metrics
+
+  ✅ No console errors (F12)
+
+═══════════════════════════════════════════════════════════════════════════
+
+YOU KNOW IT WORKED WHEN:
+═══════════════════════════════════════════════════════════════════════════
+
+✅ Fix script shows "1.000 GB" for testadmin
+✅ MongoDB check shows storageQuota: 1073741824
+✅ Dashboard displays "1.00 GB" or "1 GB"
+✅ Storage tab loads without errors
+✅ System Health tab works
+✅ No console errors (F12)
+
+═══════════════════════════════════════════════════════════════════════════
+
+DONE! 🎉
+
+Admin now has:
+  ✅ 1GB storage quota (instead of 100MB)
+  ✅ Full admin dashboard features
+  ✅ Storage management tab
+  ✅ System health monitoring
+
+═══════════════════════════════════════════════════════════════════════════

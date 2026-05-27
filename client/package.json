@@ -1,0 +1,44 @@
+{
+  "name": "file-server-client",
+  "version": "1.0.0",
+  "description": "Cross-platform GUI client for the file server",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux",
+    "build:mac": "electron-builder --mac"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^42.2.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.fileserver.client",
+    "productName": "FileServer",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": null
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  }
+}

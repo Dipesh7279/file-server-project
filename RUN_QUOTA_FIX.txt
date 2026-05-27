@@ -1,0 +1,118 @@
+============================================================
+ADMIN STORAGE QUOTA FIX - QUICK START
+============================================================
+
+PROBLEM: Admin storage quota is 100MB instead of 1GB
+
+SOLUTION: Run 1 command to update database + restart
+
+============================================================
+STEP 1: Update Database (run this first)
+============================================================
+
+Open PowerShell in project root directory and run:
+
+node fix-admin-quota.js
+
+Expected output:
+  ✅ Connected to MongoDB
+  ✅ Updated 1 admin users to 1GB quota
+  ✅ ALL QUOTAS FIXED SUCCESSFULLY!
+
+============================================================
+STEP 2: Restart Server
+============================================================
+
+In server/ directory:
+npm start
+
+Wait for: "Server running on port 5000"
+
+============================================================
+STEP 3: Restart Client (Electron App)
+============================================================
+
+In client/ directory:
+npm start
+
+Wait for Electron window to open
+
+============================================================
+STEP 4: Test Admin
+============================================================
+
+1. Click "Admin Login" link
+2. Username: testadmin
+3. Password: TestAdmin@123
+4. Click "Login as Admin"
+
+You should see:
+  ✅ Admin Dashboard
+  ✅ 5 tabs: Statistics | Users | Storage | System Health | Activity Logs
+  ✅ Storage showing 1GB quota
+  ✅ System Health showing metrics
+
+============================================================
+NEW ADMIN FEATURES ADDED
+============================================================
+
+📊 Statistics Tab
+   - Total users, active users, total files, activity
+
+👥 Users Tab
+   - List all users
+   - Suspend/reactivate users
+   - View storage usage
+
+💾 Storage Management Tab (NEW)
+   - Total storage used
+   - Per-user storage breakdown
+   - Storage progress bars
+   - Top storage users
+
+❤️ System Health Tab (NEW)
+   - Active/suspended users
+   - Total files
+   - Storage percentage
+   - System overview
+
+📝 Activity Logs Tab
+   - All user actions
+   - File operations tracking
+
+============================================================
+VERIFY IN DATABASE
+============================================================
+
+mongosh fileserver
+db.users.findOne({username: "testadmin"})
+
+Look for: storageQuota: 1073741824 (this is 1GB in bytes)
+
+============================================================
+WHAT IF IT DOESN'T WORK?
+============================================================
+
+1. Check MongoDB is running:
+   mongosh
+   exit
+
+2. Check server is accessible:
+   curl http://localhost:5000/api/health
+
+3. Check admin can login at all
+
+4. Open DevTools (F12) and check console for errors
+
+5. If still 100MB shown, run fix script again:
+   node fix-admin-quota.js
+
+============================================================
+DONE! ✅
+============================================================
+
+All admin features are now active:
+✅ 1GB storage quota
+✅ New Storage Management tab
+✅ New System Health tab
+✅ Full admin dashboard
