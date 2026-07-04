@@ -31,7 +31,7 @@ A lightweight file server built with Node.js and Express that provides RESTful e
 - Server-side validation and error handling
 - Dockerized for simple deployment
 
-(Add or remove features here depending on what the project implements.)
+
 
 ---
 
@@ -39,8 +39,9 @@ A lightweight file server built with Node.js and Express that provides RESTful e
 
 - JavaScript (Node.js, Express)
 - HTML, CSS (simple frontend)
+- Node.js,ExpressJs,MongoDB
 - Docker (containerization)
-- Optional: local filesystem storage (default); can be extended to S3 or other object storage
+- Optional: local filesystem storage (default); 
 
 ---
 
@@ -168,7 +169,7 @@ A minimal frontend is included (HTML/CSS/JS). It provides:
 - File selection and upload form
 - List of uploaded files with download/delete actions
 
-Open the app in a browser (e.g., http://localhost:3000) to use the UI.
+
 
 
 
@@ -189,7 +190,7 @@ npm test
   4. Download the file
   5. Delete the file and confirm removal
 
-Add any automated test frameworks and coverage commands you use.
+
 
 ---
 
