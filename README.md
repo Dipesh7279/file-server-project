@@ -20,10 +20,7 @@ A lightweight file server built with Node.js and Express that provides RESTful e
 - [Frontend UI](#frontend-ui)  
 - [Testing](#testing)  
 - [Deployment](#deployment)  
-- [Contributing](#contributing)  
-- [License & contact](#license--contact)  
 
----
 
 ## Features
 
